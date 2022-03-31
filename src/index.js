@@ -25,7 +25,7 @@ function registerGetMockRouter() {
     router.get('/getMock', function (req, res) {
         const data = fs.readFileSync(path.resolve(__dirname, './database/mock.json'), 'utf-8')
         res.json({
-            msg: `hello world`,
+            msg: `增加nodemon测试`,
             data: JSON.parse(data)
         })
     })
