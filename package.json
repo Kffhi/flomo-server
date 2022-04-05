@@ -10,7 +10,8 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "express": "^4.17.3"
+        "express": "^4.17.3",
+        "uuid": "^8.3.2"
     },
     "devDependencies": {
         "@types/node": "^17.0.23",
