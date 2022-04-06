@@ -1,19 +1,20 @@
-const express = require("express")
 const bodyParser = require('body-parser')
 const fs = require("fs")
+const express = require("express")
+const router = require('./router')
 const path = require("path");
-
-const hostname = "localhost"
-const port = process.env.PORT || 3000
+const tagsRouter = require('./router/tags')
 
 const app = express()
+const hostname = "localhost"
+const port = process.env.PORT || 2022
 
 app.use(bodyParser.json())
 
-const router = express.Router()
 
 registerGetMockRouter()
 registerSetMockRouter()
+tagsRouter.getAllTag()
 
 app.use(router)
 
