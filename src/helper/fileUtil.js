@@ -1,7 +1,7 @@
 // 引入其他模块
 const fs = require('fs')
 const path = require('path')
-const constant = require('../config/constant')
+// const constant = require('../config/constant')
 const responseCode = require('../config/responseCode')
 
 /**
@@ -12,10 +12,9 @@ const responseCode = require('../config/responseCode')
  */
 function getReadStream(filePath, ...options) {
     const { flag } = options.length > 0 ? options[0] : {}
-    const readStream = fs.createReadStream(filePath, {
+    return fs.createReadStream(filePath, {
         flags: flag || 'r'
     })
-    return readStream
 }
 
 /**
@@ -50,8 +49,7 @@ function readAsString(filePath, ...options) {
 
 /**
  * 读取JSON文件
- * @param fileDir 文件目录
- * @param fileName 文件名
+ * @param filePath 文件路径
  * @param options 可选设置
  * @returns {Promise<any>} Promise
  */
@@ -72,11 +70,10 @@ function readJSONFile(filePath, ...options) {
  * @returns {WriteStream} 写文件流
  */
 function getWriteStream(filePath, ...options) {
-    let { flag } = options.length > 0 ? options[0] : {};
-    const writeStream = fs.createWriteStream(filePath, {
+    let { flag } = options.length > 0 ? options[0] : {}
+    return fs.createWriteStream(filePath, {
         flags: flag || 'w'
-    });
-    return writeStream;
+    })
 }
 
 module.exports = {
