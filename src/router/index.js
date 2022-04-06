@@ -1,4 +1,9 @@
-const express = require("express")
-const router = express.Router()
+const mockRouter = require("./mock")
+const tagRouter = require("./tags")
 
-module.exports = router
+const routes = (app) => {
+    app.use("/mock", mockRouter)
+    app.use("/tag", tagRouter)
+}
+
+module.exports = routes
