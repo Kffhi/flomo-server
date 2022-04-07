@@ -1,3 +1,7 @@
+const SUCCESS_CODE = 200 // 请求成功
+
+const PARAMS_ERROR_CODE = 500 // 请求处理失败
+
 // 文件错误码
 // 文件内容为空
 const FILE_CONTENT_NULL = 501
@@ -15,6 +19,8 @@ const FILE_WRITE_ERROR = 506
 const FILE_CLOSE_ERROR = 507
 
 module.exports = {
+    PARAMS_ERROR_CODE,
+    SUCCESS_CODE,
     FILE_CONTENT_NULL,
     FILE_READ_ERROR,
     DIR_READ_ERR,

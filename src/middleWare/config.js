@@ -20,8 +20,7 @@ module.exports = app => {
     app.use(bodyParser.urlencoded({ extended: false }))
 
     // 路由
-    require('./router')(app)
-
+    require('../router')(app)
 }
 
 
