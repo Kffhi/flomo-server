@@ -53,6 +53,41 @@ function addNewTagInTree(tree, tagString) {
     })
 }
 
+/**
+ * 将标签树按照sortId大小升序排序
+ * @param tree 标签树
+ * @returns { Array } 排序后的标签树
+ */
+function sortTreeBySortId(tree) {
+    tree.forEach(item => {
+        if (item.children.length > 0) {
+            return sortTreeBySortId(item.children)
+        }
+    })
+    return tree.sort((a, b) => a.sortId - b.sortId)
+}
+
+/**
+ * 根据id在树中查找标签
+ * @param id 标签id
+ * @param tree 标签树
+ * @returns {Object | null} 查询结果
+ */
+function findTagInTreeById(id, tree) {
+    const node = tree.find(item => item.id === id)
+    if (node) {
+        return node
+    } else {
+        node.forEach(item => {
+            if (item.children.length > 0) {
+                return findTagInTreeById(id, item.children)
+            }
+        })
+    }
+}
+
 module.exports = {
-    addNewTagInTree
+    addNewTagInTree,
+    sortTreeBySortId,
+    findTagInTreeById
 }
