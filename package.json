@@ -17,7 +17,6 @@
     },
     "devDependencies": {
         "@types/node": "^17.0.23",
-        "mime-types": "^2.1.35",
         "nodemon": "^2.0.15"
     }
 }
