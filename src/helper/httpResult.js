@@ -3,7 +3,8 @@ const responseCode = require('../config/responseCode')
 class ResultBody {
     static success(data = null) {
         return {
-            status: responseCode.SUCCESS_CODE,
+            code: responseCode.SUCCESS_CODE,
+            status: true,
             message: '操作成功',
             data
         }
@@ -11,7 +12,8 @@ class ResultBody {
 
     static error(errorCode = responseCode.PARAMS_ERROR_CODE, data = null){
         return {
-            status: errorCode,
+            code: errorCode,
+            status: false,
             message: '操作失败',
             data
         }
