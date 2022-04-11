@@ -2,6 +2,8 @@ const _ = require('lodash')
 const { v4: uuidv4 } = require('uuid')
 const constant = require('../config/constant')
 const responseCode = require('../config/responseCode')
+const fileUtil = require('../helper/fileUtil')
+const pathUtil = require('../helper/path')
 
 /**
  * 将新的tag字符串插入进已有的tag tree中
@@ -86,7 +88,25 @@ function findTagInTreeById(id, tree) {
     }
 }
 
+async function getTagNumber() {
+    const tagsTree = await fileUtil.readJSONFile(pathUtil.getRootPath('/database/tags.json'))
+    let tagsNumber = 0
+    const fn = (arr) => {
+        if (arr) {
+            arr.forEach(item => {
+                tagsNumber += 1
+                if (item.children.length > 0) {
+                    fn(item.children)
+                }
+            })
+        }
+    }
+    fn(tagsTree)
+    return tagsNumber
+}
+
 module.exports = {
+    getTagNumber,
     addNewTagInTree,
     sortTreeBySortId,
     findTagInTreeById
