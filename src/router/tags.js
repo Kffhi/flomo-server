@@ -21,12 +21,10 @@ router.get('/getAll', (req, res) => {
 
 // 新增标签
 router.post('/add', (req, res) => {
-    fileUtil.readJSONFile(pathUtil.getRootPath('/database/tags.json')).then(data => {
-        tagUtils.addNewTagInTree(data, req.body.content).then(tree => {
-            fileUtil.writeJSONFile(pathUtil.getRootPath('/database/tags.json'), tree).then(() => {
-                res.json(ResultBody.success())
-            })
-        })
+    fileUtil.readJSONFile(pathUtil.getRootPath('/database/tags.json')).then(async data => {
+        const tree = await tagUtils.addNewTagInTree(data, req.body.content)
+        await fileUtil.writeJSONFile(pathUtil.getRootPath('/database/tags.json'), tree)
+        res.json(ResultBody.success())
     }).catch(err => {
         res.json(ResultBody.error(err))
     })
@@ -36,18 +34,13 @@ router.post('/add', (req, res) => {
 router.post('/edit', (req, res) => {
     const { id, content, icon } = req.body
     fileUtil.readJSONFile(pathUtil.getRootPath('/database/tags.json')).then(data => {
-        try {
-            const tarTag = tagUtils.findTagInTreeById(id, data)
-            if (_.isString(icon) && icon) tarTag.icon = icon
-            if (_.isString(content) && content) {
-                tarTag.value = content
-                // TODO: 如果是重命名需要修改对应的所有Memo中的内容
-            }
-            res.json(ResultBody.success())
-        } catch (err) {
-            console.log('标签重命名失败', err)
-            res.json(ResultBody.error())
+        const tarTag = tagUtils.findTagInTreeById(id, data)
+        if (_.isString(icon) && icon) tarTag.icon = icon
+        if (_.isString(content) && content) {
+            tarTag.value = content
+            // TODO: 如果是重命名需要修改对应的所有Memo中的内容
         }
+        res.json(ResultBody.success())
     }).catch(err => {
         res.json(ResultBody.error(err))
     })
