@@ -17,4 +17,13 @@ router.get('/userInfo',  (req, res) => {
     })
 })
 
+// 获取所有标签
+router.get('/heatMap',  (req, res) => {
+    fileUtil.readJSONFile(pathUtil.getRootPath('/database/heatMap.json')).then(async data => {
+        res.json(ResultBody.success(data))
+    }).catch(err => {
+        res.json(ResultBody.error(err))
+    })
+})
+
 module.exports = router
