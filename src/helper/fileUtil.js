@@ -64,6 +64,16 @@ function readJSONFile(filePath, ...options) {
 }
 
 /**
+ * 获取文件夹下所有的文件
+ * @param filePath 文件路径
+ * @returns fileNames[] 文件名数组
+ */
+function getAllFile(dirPath){
+    return fs.readdirSync(dirPath)
+}
+
+
+/**
  * 获取写文件流
  * @param filePath 文件路径
  * @param options 可选设置
@@ -119,6 +129,7 @@ function writeJSONFile(filePath, data, ...options) {
 }
 
 module.exports = {
+    getAllFile,
     getReadStream,
     readAsString,
     readJSONFile,
