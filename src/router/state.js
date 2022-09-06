@@ -7,7 +7,7 @@ const pathUtil = require('../helper/path')
 const stateUtils = require('../businessUtils/state')
 const ResultBody = require('../helper/httpResult')
 
-// 获取所有标签
+// 获取所有用户信息
 router.get('/userInfo',  (req, res) => {
     fileUtil.readJSONFile(pathUtil.getRootPath('/database/userInfo.json')).then(async data => {
         const userInfo = await stateUtils.getCompleteUserInfo(data)
@@ -17,7 +17,7 @@ router.get('/userInfo',  (req, res) => {
     })
 })
 
-// 获取所有标签
+// 获取所有热力图信心
 router.get('/heatMap',  (req, res) => {
     fileUtil.readJSONFile(pathUtil.getRootPath('/database/heatMap.json')).then(async data => {
         res.json(ResultBody.success(data))

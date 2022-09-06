@@ -10,7 +10,7 @@ const dateUtils = require('../helper/date')
 async function getCompleteUserInfo(userInfo) {
     const { registerTime = Date.now() } = userInfo
     userInfo.tagNumber = await tagUtils.getTagNumber()
-    userInfo.memoNumber = await memoUtils.getMemoNUmber()
+    userInfo.memoNumber = await memoUtils.getMemoNumber()
     userInfo.duration = dateUtils.getDuration(registerTime).day
     console.log('userInfo0-----', userInfo)
     return userInfo
