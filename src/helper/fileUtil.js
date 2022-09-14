@@ -35,7 +35,8 @@ function readAsString(filePath, ...options) {
         readStream.on('end', () => {
             console.log(`${path.basename(filePath)} => read success`)
             if (data.length === 0) {
-                reject(responseCode.FILE_CONTENT_NULL)
+                // TODO: 不应该这么写的，不过这repo就这么几个文件，逻辑定死
+                resolve('{}')
             } else {
                 resolve(data)
             }
@@ -68,7 +69,7 @@ function readJSONFile(filePath, ...options) {
  * @param filePath 文件路径
  * @returns fileNames[] 文件名数组
  */
-function getAllFile(dirPath){
+function getAllFile(dirPath) {
     return fs.readdirSync(dirPath)
 }
 
@@ -125,10 +126,41 @@ function writeJSONFile(filePath, data, ...options) {
             reject(err)
         })
     })
+}
 
+/**
+ * 检测文件是否存在，不存在则创建
+ * @param filePath 文件路径
+ * @returns {Promise<void>}
+ */
+function checkAndMkFile(filePath) {
+    return new Promise((resolve, reject) => {
+        fs.open(filePath, 'wx', (err, fd) => {
+            if (err) {
+                if (err.code === 'EEXIST') {
+                    // 文件已存在
+                    resolve()
+                } else {
+                    // 其他文件打开错误
+                    reject(responseCode.FILE_OPEN_ERROR)
+                }
+            } else {
+                // 写完后记得关闭，否则对文件的其他操作可能会出现错误
+                fs.close(fd, (err) => {
+                    if (err) {
+                        reject(responseCode.FILE_CLOSE_ERROR)
+                    } else {
+                        // 使用wx的方式打开，如果文件不存在会自动创建
+                        resolve()
+                    }
+                })
+            }
+        })
+    })
 }
 
 module.exports = {
+    checkAndMkFile,
     getAllFile,
     getReadStream,
     readAsString,
