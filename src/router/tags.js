@@ -22,7 +22,7 @@ router.get('/getAll', (req, res) => {
 // 新增标签
 router.post('/add', (req, res) => {
     fileUtil.readJSONFile(pathUtil.getRootPath('/database/tags.json')).then(async data => {
-        const tree = await tagUtils.addNewTagInTree(data, req.body.content)
+        const tree = await tagUtils.addNewTagInTree(data, req.body.tag)
         await fileUtil.writeJSONFile(pathUtil.getRootPath('/database/tags.json'), tree)
         res.json(ResultBody.success())
     }).catch(err => {

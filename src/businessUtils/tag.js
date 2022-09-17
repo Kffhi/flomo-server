@@ -12,6 +12,7 @@ const pathUtil = require('../helper/path')
  * @returns { Promise<unknown> }
  */
 function addNewTagInTree(tree, tagString) {
+    tagString = tagString.trim()
     return new Promise((resolve, reject) => {
         try {
             const tagArr = tagString.replace('#', '').split('/') // 解析标签，最有可能报错的地方
@@ -45,7 +46,7 @@ function addNewTagInTree(tree, tagString) {
                     setTagInArr(newTagNode.children, newTagNode)
                 }
             }
-            const res = _.cloneDeep(tree)
+            const res = tree
             setTagInArr(res)
             resolve(res)
         } catch (err) {
@@ -53,6 +54,21 @@ function addNewTagInTree(tree, tagString) {
             reject(responseCode.PARAMS_ERROR_CODE)
         }
     })
+}
+
+/**
+ * 将新的tag字符串插入进已有的tag tree中
+ * @param tree tag.json里的tag树
+ * @param tags 标签数组
+ * @returns { Promise<unknown> }
+ */
+async function addNewTagsInTree(tree, tags) {
+    let res = tree
+    await tags.reduce(async (memo, tagString) => {
+        await memo
+        res = await addNewTagInTree(tree, tagString)
+    }, undefined)
+    return res
 }
 
 /**
@@ -106,6 +122,7 @@ async function getTagNumber() {
 }
 
 module.exports = {
+    addNewTagsInTree,
     getTagNumber,
     addNewTagInTree,
     sortTreeBySortId,

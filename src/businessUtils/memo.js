@@ -1,12 +1,37 @@
 const { v4: uuidv4 } = require('uuid')
 const _ = require('lodash')
+const fileUtil = require('../helper/fileUtil')
+const pathUtil = require('../helper/path')
+const ResultBody = require('../helper/httpResult')
 
 /**
  * 获取memo的数量
- * @returns {number}
+ * @returns {Promise<number>}
  */
 async function getMemoNumber() {
-    return 0
+    const memos = await getAllMemo()
+    return memos.length
+}
+
+/**
+ * 获取所有的memos
+ * @returns {Promise<memo[]>}
+ */
+function getAllMemo() {
+    return new Promise((resolve, reject) => {
+        const files = fileUtil.getAllFile(pathUtil.getRootPath('/database/memo'))
+        const promiseList = []
+        files.forEach(fileName => {
+            const p = fileUtil.readJSONFile(pathUtil.getRootPath(`/database/memo/${fileName}`))
+            promiseList.push(p)
+        })
+        Promise.all(promiseList).then(list => {
+            const memos = combineMemoList(list)
+            resolve(memos)
+        }).catch(err => {
+            reject(err)
+        })
+    })
 }
 
 /**
@@ -44,7 +69,7 @@ function getTagsFromContent(content) {
         arr.forEach(item => {
             if (_.isArray(item.children)) {
                 getTags(item.children)
-            } else if(item.tag){
+            } else if (item.tag) {
                 tags.push(item.text.trim())
             }
         })
@@ -56,6 +81,7 @@ function getTagsFromContent(content) {
 
 module.exports = {
     getTagsFromContent,
+    getAllMemo,
     getNewMemo,
     getMemoNumber,
     combineMemoList
