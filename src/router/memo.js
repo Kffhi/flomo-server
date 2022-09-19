@@ -85,8 +85,57 @@ router.post('/add', (req, res) => {
     }).catch(err => {
         res.json(ResultBody.error(err))
     })
+})
 
+// 新增memo
+router.post('/edit', (req, res) => {
+    // TODO: 后面全拆开丢util里去
+    const { content, id } = req.body
+    memoUtils.getAllMemo().then(list => {
+        const memo = list.find(item => item.id === id) // 拿到原先的memo
+        const month = dayjs(memo.createTime).format('YYYY-MM') // 拿到存储的文件
+        // 新的memo数据
+        const newMemo = {
+            content: content,
+            updateTime: Date.now(),
+            tags: memoUtils.getTagsFromContent(content)
+        }
 
+        // 处理memo
+        const p1 = new Promise((resolve, reject) => {
+            // 重新读文件是为了重新写文件，还是数据库好用
+            fileUtil.readJSONFile(pathUtil.getRootPath(`/database/memo/${month}.json`)).then(async data => {
+                data.forEach(_memo => {
+                    if (_memo.id === id) {
+                        // 更新对应memo的数据
+                        Object.assign(_memo, newMemo)
+                    }
+                })
+                // 再写回去
+                await fileUtil.writeJSONFile(pathUtil.getRootPath(`/database/memo/${month}.json`), data)
+                resolve()
+            }).catch(err => {
+                reject(err)
+            })
+        })
+
+        // 处理tag
+        const p2 = new Promise((resolve, reject) => {
+            fileUtil.readJSONFile(pathUtil.getRootPath('/database/tags.json')).then(async data => {
+                const tree = await tagUtils.addNewTagsInTree(data, newMemo.tags)
+                await fileUtil.writeJSONFile(pathUtil.getRootPath('/database/tags.json'), tree)
+                resolve()
+            }).catch(err => {
+                reject(err)
+            })
+        })
+
+        Promise.all([p1, p2]).then(() => {
+            res.json(ResultBody.success())
+        }).catch(err => {
+            res.json(ResultBody.error(err))
+        })
+    })
 })
 
 module.exports = router

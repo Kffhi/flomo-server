@@ -15,7 +15,7 @@ async function getMemoNumber() {
 
 /**
  * 获取所有的memos
- * @returns {Promise<memo[]>}
+ * @returns {Promise<memo[{id: ''}]>}
  */
 function getAllMemo() {
     return new Promise((resolve, reject) => {
@@ -46,14 +46,14 @@ function combineMemoList(list) {
  * @param content 内容
  */
 function getNewMemo(content) {
-    const memos = { content }
-    memos.id = uuidv4()
-    memos.files = [] // TODO: 暂时不支持图片
-    memos.userId = 'kffhi'
-    memos.createTime = Date.now()
-    memos.updateTime = memos.createTime
-    memos.tags = getTagsFromContent(content)
-    return memos
+    const memo = { content }
+    memo.id = uuidv4()
+    memo.files = [] // TODO: 暂时不支持图片
+    memo.userId = 'kffhi'
+    memo.createTime = Date.now()
+    memo.updateTime = memo.createTime
+    memo.tags = getTagsFromContent(content)
+    return memo
 }
 
 /**
