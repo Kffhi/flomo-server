@@ -87,7 +87,7 @@ router.post('/add', (req, res) => {
     })
 })
 
-// 新增memo
+// 编辑memo
 router.post('/edit', (req, res) => {
     // TODO: 后面全拆开丢util里去
     const { content, id } = req.body
@@ -131,6 +131,27 @@ router.post('/edit', (req, res) => {
         })
 
         Promise.all([p1, p2]).then(() => {
+            res.json(ResultBody.success())
+        }).catch(err => {
+            res.json(ResultBody.error(err))
+        })
+    })
+})
+
+// 删除memo
+router.delete('/delete', (req, res) => {
+    // TODO: 后面全拆开丢util里去
+    const { id } = req.query
+    memoUtils.getAllMemo().then(list => {
+        const memo = list.find(item => item.id === id) // 拿到原先的memo
+        const month = dayjs(memo.createTime).format('YYYY-MM') // 拿到存储的文件
+
+        // 处理memo
+        fileUtil.readJSONFile(pathUtil.getRootPath(`/database/memo/${month}.json`)).then(async data => {
+            const index = data.findIndex(item => item.id === id)
+            data.splice(index, 1)
+            // 再写回去
+            await fileUtil.writeJSONFile(pathUtil.getRootPath(`/database/memo/${month}.json`), data)
             res.json(ResultBody.success())
         }).catch(err => {
             res.json(ResultBody.error(err))
