@@ -35,6 +35,48 @@ function getAllMemo() {
 }
 
 /**
+ *  通过标签查找memo
+ * @returns {Promise<memo[{id: ''}]>}
+ */
+function getMemoByTag({ tag = '', tagId = '' }) {
+    return new Promise((resolve, reject) => {
+        // 先不管只给了id的情况，懒得再查一次tag了
+        getAllMemo().then(list => {
+            const res = list.filter(item => item.tags.includes(tag))
+            resolve(res)
+        })
+    })
+}
+
+/**
+ *  TODO: 先只做关键字
+ *  查找/高级查找
+ * @returns {Promise<memo[{id: ''}]>}
+ */
+function searchMemo({ word }) {
+    return new Promise((resolve, reject) => {
+        getAllMemo().then(list => {
+            // TODO: YOU KNOW
+            const res = list.filter(() => Math.random() > 0.5)
+            resolve(res)
+        })
+    })
+}
+
+/**
+ *  随机返回一个memo
+ * @returns {Promise<memo[{id: ''}]>}
+ */
+function getMemoHangout() {
+    return new Promise((resolve, reject) => {
+        getAllMemo().then(list => {
+            const index = Math.floor(Math.random() * list.length)
+            resolve([list[index]])
+        })
+    })
+}
+
+/**
  * 组装memo   TODO:可能需要排序
  */
 function combineMemoList(list) {
@@ -80,6 +122,9 @@ function getTagsFromContent(content) {
 }
 
 module.exports = {
+    searchMemo,
+    getMemoHangout,
+    getMemoByTag,
     getTagsFromContent,
     getAllMemo,
     getNewMemo,

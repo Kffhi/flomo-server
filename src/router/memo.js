@@ -10,9 +10,38 @@ const dayjs = require('dayjs')
 const tagUtils = require('../businessUtils/tag')
 const stateUtils = require('../businessUtils/state')
 
-// 获取所有Memos  TODO:分页？查询？
+// 获取所有Memos
 router.get('/getAll', (req, res) => {
     memoUtils.getAllMemo().then(memos => {
+        res.json(ResultBody.success(memos))
+    }).catch(err => {
+        res.json(ResultBody.error(err))
+    })
+})
+
+// 通过标签查找memo
+router.get('/getByTag', (req, res) => {
+    const { tag = '', tagId = '' } = req.query
+    memoUtils.getMemoByTag({ tag, tagId }).then(memos => {
+        res.json(ResultBody.success(memos))
+    }).catch(err => {
+        res.json(ResultBody.error(err))
+    })
+})
+
+// 随机返回一个memo
+router.get('/hangout', (req, res) => {
+    memoUtils.getMemoHangout().then(memos => {
+        res.json(ResultBody.success(memos))
+    }).catch(err => {
+        res.json(ResultBody.error(err))
+    })
+})
+
+// 通过标签查找memo
+router.post('/search', (req, res) => {
+    const { word = '' } = req.body
+    memoUtils.searchMemo({ word }).then(memos => {
         res.json(ResultBody.success(memos))
     }).catch(err => {
         res.json(ResultBody.error(err))
