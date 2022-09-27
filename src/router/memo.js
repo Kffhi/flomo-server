@@ -38,7 +38,7 @@ router.get('/hangout', (req, res) => {
     })
 })
 
-// 通过标签查找memo
+// 高级查找memo
 router.post('/search', (req, res) => {
     const { word = '' } = req.body
     memoUtils.searchMemo({ word }).then(memos => {
