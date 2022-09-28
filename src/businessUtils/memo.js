@@ -15,7 +15,7 @@ async function getMemoNumber() {
 
 /**
  * 获取所有的memos
- * @returns {Promise<memo[{id: ''}]>}
+ * @returns {Promise<memo[{id: '',content: [], tags: []}]>}
  */
 function getAllMemo() {
     return new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ function getMemoByTag({ tag = '', tagId = '' }) {
         getAllMemo().then(list => {
             const res = list.filter(item => {
                 // 给过来的标签和memo下的格式不是完全一致
-              return item.tags.includes(`#${tag.trim()}`)
+                return item.tags.includes(`#${tag.trim()}`)
             })
             resolve(res)
         })
@@ -57,10 +57,28 @@ function getMemoByTag({ tag = '', tagId = '' }) {
  * @returns {Promise<memo[{id: ''}]>}
  */
 function searchMemo({ word }) {
+    // 用于记录全部内容的字符串
+    let str = ''
+    // 内部函数，内容拼接
+    const getStr = (arr) => {
+        arr.forEach(item => {
+            if (_.isArray(item.children)) {
+                getStr(item.children)
+            }
+            if (_.isString(item.text)) {
+                str += item.text
+            }
+        })
+    }
+
     return new Promise((resolve, reject) => {
         getAllMemo().then(list => {
-            // TODO: YOU KNOW
-            const res = list.filter(() => Math.random() > 0.5)
+            const res = list.filter(item => {
+                str = ''
+                getStr(item.content)
+                item.str = str
+                return item.str.includes(word)
+            })
             resolve(res)
         })
     })
