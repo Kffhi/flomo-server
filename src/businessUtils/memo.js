@@ -126,9 +126,9 @@ function getNewMemo(content) {
     memo.id = uuidv4()
     memo.files = [] // TODO: 暂时不支持图片
     memo.userId = 'kffhi'
-    memo.createTime = dayjs()
+    memo.createTime = Date.now()
     memo.updateTime = memo.createTime
-    memo.date = memo.createTime.format('YYYY年MM月DD日')
+    memo.date = dayjs(memo.createTime).format('YYYY年MM月DD日')
     memo.tags = getTagsFromContent(content)
     return memo
 }
@@ -147,7 +147,8 @@ function getTagsFromContent(content) {
             if (_.isArray(item.children)) {
                 getTags(item.children)
             } else if (item.tag) {
-                tags.push(item.text.trim())
+                const str = item.text.trim() // 空白标签
+                if (str && str !== '#') tags.push(str)
             }
         })
     }

@@ -126,7 +126,7 @@ router.post('/edit', (req, res) => {
         // 新的memo数据
         const newMemo = {
             content: content,
-            updateTime: dayjs(),
+            updateTime: Date.now(),
             tags: memoUtils.getTagsFromContent(content)
         }
 
