@@ -22,7 +22,6 @@ async function getCompleteUserInfo(userInfo) {
  * @param type 枚举（add，delete）加一或者减一，先这样吧，后面有批量修改啥再说
  */
 function changeMemoCountInHeatMap(heatMap, day, type) {
-    console.log('-------',heatMap)
     let curDay = heatMap.find(item => item[0] === day)
     if (curDay) {
         /// 区分是新增还是删除

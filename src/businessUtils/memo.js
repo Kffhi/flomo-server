@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require('uuid')
 const _ = require('lodash')
 const fileUtil = require('../helper/fileUtil')
 const pathUtil = require('../helper/path')
-const ResultBody = require('../helper/httpResult')
+const dayjs = require('dayjs')
 
 /**
  * 获取memo的数量
@@ -51,19 +51,20 @@ function getMemoByTag({ tag = '', tagId = '' }) {
     })
 }
 
+
 /**
- *  TODO: 先只做关键字
+ *  TODO: 先只做关键字和日期
  *  查找/高级查找
  * @returns {Promise<memo[{id: ''}]>}
  */
-function searchMemo({ word }) {
+function searchMemo({ word, date }) {
     // 用于记录全部内容的字符串
     let str = ''
-    // 内部函数，内容拼接
-    const getStr = (arr) => {
+    // 内部方法，用于从memo中解析出纯文本内容
+    const getStrFromContent = (arr) => {
         arr.forEach(item => {
             if (_.isArray(item.children)) {
-                getStr(item.children)
+                return getStrFromContent(item.children, str)
             }
             if (_.isString(item.text)) {
                 str += item.text
@@ -73,12 +74,24 @@ function searchMemo({ word }) {
 
     return new Promise((resolve, reject) => {
         getAllMemo().then(list => {
-            const res = list.filter(item => {
-                str = ''
-                getStr(item.content)
-                item.str = str
-                return item.str.includes(word)
-            })
+            let res = list
+            // 搜索日期
+            if (_.isString(date) && date) {
+                res = res.filter(item => {
+                    return (
+                        item?.date === date || dayjs(item.createTime).format('YYYY年MM月DD日') === date
+                    )
+                })
+            }
+            // 搜索关键字
+            if (_.isString(word) && word) {
+                res = res.filter(item => {
+                    str = ''
+                    getStrFromContent(item.content)
+                    item.str = str
+                    return item.str.includes(word)
+                })
+            }
             resolve(res)
         })
     })
@@ -113,8 +126,9 @@ function getNewMemo(content) {
     memo.id = uuidv4()
     memo.files = [] // TODO: 暂时不支持图片
     memo.userId = 'kffhi'
-    memo.createTime = Date.now()
+    memo.createTime = dayjs()
     memo.updateTime = memo.createTime
+    memo.date = memo.createTime.format('YYYY年MM月DD日')
     memo.tags = getTagsFromContent(content)
     return memo
 }

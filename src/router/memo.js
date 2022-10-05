@@ -40,8 +40,8 @@ router.get('/hangout', (req, res) => {
 
 // 高级查找memo
 router.post('/search', (req, res) => {
-    const { word = '' } = req.body
-    memoUtils.searchMemo({ word }).then(memos => {
+    const { word = '', date = '' } = req.body
+    memoUtils.searchMemo({ word, date }).then(memos => {
         res.json(ResultBody.success(memos))
     }).catch(err => {
         res.json(ResultBody.error(err))
@@ -126,7 +126,7 @@ router.post('/edit', (req, res) => {
         // 新的memo数据
         const newMemo = {
             content: content,
-            updateTime: Date.now(),
+            updateTime: dayjs(),
             tags: memoUtils.getTagsFromContent(content)
         }
 
