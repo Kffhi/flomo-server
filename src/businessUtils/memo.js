@@ -43,8 +43,10 @@ function getMemoByTag({ tag = '', tagId = '' }) {
         // 先不管只给了id的情况，懒得再查一次tag了
         getAllMemo().then(list => {
             const res = list.filter(item => {
-                // 给过来的标签和memo下的格式不是完全一致
-                return item.tags.includes(`#${tag.trim()}`)
+                return  item.tags.findIndex(t => {
+                    return (t.includes(`#${tag.trim()}`) || t.includes(`/${tag.trim()}`))
+                    // TODO: 这样其实还是有问题，没法区分'#一级/二级/三级'和'#一级/二级额外内容/三级'，不过怎么说搜索也不是重点，先放着
+                }) > -1
             })
             resolve(res)
         })
