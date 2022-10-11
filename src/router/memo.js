@@ -55,7 +55,7 @@ router.post('/add', (req, res) => {
     const now = Date.now() // 先拿到时间戳
     const month = dayjs(now).format('YYYY-MM') // 匹配memos存储的文件，按月区分
     const day = dayjs(now).format('YYYY年MM月DD日') // 获取当前的日期，用于heatMap更新
-
+    memoUtils.formatContent(content) // 对数据做一次基础的格式化
     const newMemo = memoUtils.getNewMemo(content) // 整理完整内容
     newMemo.host = `${req.socket.remoteAddress}${req.socket.remotePort}` // 加入一下请求标识，这么干纯粹是因为懒得做userId的token之类的了但是感觉还是需要一个标识，不是重点～
 
@@ -124,6 +124,7 @@ router.post('/edit', (req, res) => {
         const memo = list.find(item => item.id === id) // 拿到原先的memo
         const month = dayjs(memo.createTime).format('YYYY-MM') // 拿到存储的文件
         // 新的memo数据
+        memoUtils.formatContent(content) // 对数据做一次基础的格式化
         const newMemo = {
             content: content,
             updateTime: Date.now(),

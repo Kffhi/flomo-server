@@ -159,7 +159,36 @@ function getTagsFromContent(content) {
     return tags
 }
 
+/**
+ * 格式化处理content内容，主要是tag标记
+ * 直接修改原数据
+ * TODO: 和 getTagsFromContent 一起处理的话可以减少一次遍历
+ * @param content
+ */
+function formatContent(content){
+    // 内部函数，做递归用
+    const getTags = arr => {
+        arr.forEach(item => {
+            if (_.isArray(item.children)) {
+                getTags(item.children)
+            } else if (item.tag) {
+                const str = item.text.trim() // 空白标签
+                // TODO: 先简单的处理一下不是tag的情况
+                // 理想情况下应该能在这里把tag和不同文本节点区分开
+                // 再对node做一下整体的整理，减少节点数
+                // TODO: 这里处理归处理，还是觉得应该在编辑的时候就把标签高亮显示处理
+                if(str[0] !== '#'){
+                    item.tag = false
+                }
+            }
+        })
+    }
+
+    getTags(content)
+}
+
 module.exports = {
+    formatContent,
     searchMemo,
     getMemoHangout,
     getMemoByTag,
