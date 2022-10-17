@@ -1,14 +1,15 @@
 const express = require('express')
 const router = express.Router()
 const _ = require('lodash')
-
 const fileUtil = require('../helper/fileUtil')
+const fileUpload = require('../helper/fileUpload')
 const pathUtil = require('../helper/path')
 const memoUtils = require('../businessUtils/memo')
 const ResultBody = require('../helper/httpResult')
 const dayjs = require('dayjs')
 const tagUtils = require('../businessUtils/tag')
 const stateUtils = require('../businessUtils/state')
+const upload = require('../middleWare/multer').upload
 
 // 获取所有Memos
 router.get('/getAll', (req, res) => {
@@ -187,6 +188,23 @@ router.delete('/delete', (req, res) => {
             res.json(ResultBody.error(err))
         })
     })
+})
+
+// 图片上传
+router.post('/upload', upload.single('files'), (req, res) => {
+    const setting = {
+        destDir: pathUtil.getRootPath('/database/public/images'), // 默认的最终存放位置
+        maxFileNameLength: 50,
+        maxFileSize: 5 * 1024 * 1024,
+        allowFileType: ['.png', '.jpg', '.jpeg']
+    }
+    const { file } = req
+    fileUpload.upload(file, setting).then(data => {
+        res.json(ResultBody.success(data))
+    }).catch(err => {
+        res.json(ResultBody.error(err))
+    })
+
 })
 
 module.exports = router

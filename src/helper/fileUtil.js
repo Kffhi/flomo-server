@@ -159,7 +159,30 @@ function checkAndMkFile(filePath) {
     })
 }
 
+/**
+ * 文件复制
+ * @param srcPath 源文件路径
+ * @param destPath 目标文件路径
+ */
+async function copy(srcPath, destPath) {
+    return new Promise((resolve, reject) => {
+        const readStream = getReadStream(srcPath)
+        const writeStream = getWriteStream(destPath)
+        readStream.pipe(writeStream)
+        readStream.on('error', err => {
+            reject(false)
+        })
+        writeStream.on('finish', () => {
+            resolve(true)
+        })
+        writeStream.on('error', (err) => {
+            reject(false)
+        })
+    })
+}
+
 module.exports = {
+    copy,
     checkAndMkFile,
     getAllFile,
     getReadStream,
