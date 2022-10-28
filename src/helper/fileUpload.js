@@ -29,7 +29,7 @@ function fileIsAllowed(file, exts) {
  */
 function fileCopy(file, destDir) {
     const destFileName = `${uuidv4()}${path.extname(file.originalname)}` // 直接用uuid替换文件名，防止重名
-    const destURL = `${destDir}\\${destFileName}` // 完整的路径
+    const destURL = `${destDir}/${destFileName}` // 完整的路径
     const url = path.join(path.sep, './images/', destFileName).replace(/\\/g, '/') // 静态资源访问路径
     return new Promise((resolve, reject) => {
         // 有路径就复制文件
