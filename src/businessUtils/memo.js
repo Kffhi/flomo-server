@@ -3,6 +3,7 @@ const _ = require('lodash')
 const fileUtil = require('../helper/fileUtil')
 const pathUtil = require('../helper/path')
 const dayjs = require('dayjs')
+const { moveItemToFirst } = require('../helper/jsonHandle')
 
 /**
  * 获取memo的数量
@@ -26,7 +27,8 @@ function getAllMemo() {
             promiseList.push(p)
         })
         Promise.all(promiseList).then(list => {
-            const memos = combineMemoList(list)
+            // 就这样吧，硬编码，我不想写了
+            const memos = moveItemToFirst(combineMemoList(list), '391a613c-dc90-454b-873f-22a227b178f0')
             resolve(memos)
         }).catch(err => {
             reject(err)
@@ -43,8 +45,10 @@ function getMemoByTag({ tag = '', tagId = '' }) {
         // 先不管只给了id的情况，懒得再查一次tag了
         getAllMemo().then(list => {
             const res = list.filter(item => {
-                return  item.tags.findIndex(t => {
-                    return (t.includes(`#${tag.trim()}`) || t.includes(`/${tag.trim()}`))
+                return item.tags.findIndex(t => {
+                    return (
+                        t.includes(`#${tag.trim()}`) || t.includes(`/${tag.trim()}`)
+                    )
                     // TODO: 这样其实还是有问题，没法区分'#一级/二级/三级'和'#一级/二级额外内容/三级'，不过怎么说搜索也不是重点，先放着
                 }) > -1
             })
@@ -165,7 +169,7 @@ function getTagsFromContent(content) {
  * TODO: 和 getTagsFromContent 一起处理的话可以减少一次遍历
  * @param content
  */
-function formatContent(content){
+function formatContent(content) {
     // 内部函数，做递归用
     const getTags = arr => {
         arr.forEach(item => {
@@ -177,7 +181,7 @@ function formatContent(content){
                 // 理想情况下应该能在这里把tag和不同文本节点区分开
                 // 再对node做一下整体的整理，减少节点数
                 // TODO: 这里处理归处理，还是觉得应该在编辑的时候就把标签高亮显示处理
-                if(str[0] !== '#'){
+                if (str[0] !== '#') {
                     item.tag = false
                 }
             }
